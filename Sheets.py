@@ -1,11 +1,13 @@
 '''
- Jacob Rosales Chase
- A collection of methods to get and modify Google Sheets using gspread
- All methods will take a single value and modify a single row of a sheet
+A collection of Sheet models building off gspread Worksheet models
+These models are very row-focused, meaning the actions built off of gspread
+are focused on getting rows with certain falues, adding rows, removing rows etc.
 '''
 
 import gspread
+from gspread.models import Worksheet
 from oauth2client.service_account import ServiceAccountCredentials
+from gspread.ns import _ns, ATOM_NS
 from User import User
 
 SCOPE = ['https://spreadsheets.google.com/feeds']
@@ -15,98 +17,83 @@ CLIENT_SECRET = "client_secret.json"
 def get_credentials():
     return ServiceAccountCredentials.from_json_keyfile_name(CLIENT_SECRET, SCOPE)
 
-#returns a worksheet given the name of the sheet
-def get_sheet(sheetname):
+#returns a spreadsheet given the name of the sheet
+def get_spreadsheet(sheetname):
     credentials = get_credentials()
     gc = gspread.authorize(credentials)
-    worksheet = gc.open(sheetname).sheet1
-    return worksheet
+    return gc.open(sheetname)
 
-#returns the row number of the sheet the value is located at
-#return None if the value cannot be found in the sheet
-def get_row_number(value, sheet):
-    try:
-        return sheet.find(value).row
-    except:
-        return None
 
-#returns whether or not a value is in the sheet
-def contains(value, sheet):
-    if(get_row_number(value, sheet)):
-        return True
-    return False
+                ##### SHEET CLASS #####
 
-#returns a list of the entire row of values that contains the value provided
-#returns None if there is no such item in the sheet
-def get_row(value, sheet):
-    user_row = get_row_number(value, sheet)
-    if(user_row):
-        return sheet.row_values(user_row)
-    return None
 
-# removes the entire row that contains the value provided
-# returns True if the operation was successful
-# returns False if there is no shuch item in the sheet
-def remove_row(value, sheet):
-    row_number = get_row_number(value, sheet)
-    if(not row_number):
-        return False
-
-    if(row_number != sheet.row_count):
-        ran = str("A" + str(row_number) + ":" + "D" + str(sheet.row_count))
-        cell_list = sheet.range(ran)
-
-        for i in range(len(cell_list) - sheet.col_count):
-            cell_list[i].value = cell_list[i + sheet.col_count].value
-
-        sheet.update_cells(cell_list)
-
-    sheet.resize(sheet.row_count - 1, sheet.col_count)
-    return True
-
-# adds a row to a specified sheet given a list of values
-def add_row(values, sheet):
-    sheet.append_row(values)
-    return True
-
-# represents a spreadsheet
-class Sheet:
-    # initializes the sheet given the name of the sheet
-    def __init__(self, string):
-        self.name = string
-        self.sheet = get_sheet(string)
+# represents a worksheet, extends gspread Worksheet
+class Sheet(Worksheet):
+    # initializes the sheet given the name of the spreadsheet and number of work
+    def __init__(self, string, sheetnum):
+        spreadsheet = get_spreadsheet(string)
+        feed = spreadsheet.client.get_worksheets_feed(spreadsheet)
+        lst = feed.findall(_ns('entry'))
+        super(Sheet, self).__init__(spreadsheet, lst[sheetnum])
 
     #returns the row number of the sheet the value is located at
     #return None if the value cannot be found in the sheet
     def get_row_number(self, value):
-        return get_row_number(value, self.sheet)
+        try:
+            return self.find(value).row
+        except:
+            return None
 
     #returns whether or not a value is in the sheet
     def contains(self, value):
-        return contains(value)
+        if(self.get_row_number(value)):
+            return True
+        return False
 
     #returns a list of the entire row of values that contains the value provided
     #returns None if there is no such item in the sheet
     def get_row(self, value):
-        return get_row(value, self.sheet)
+        user_row = self.get_row_number(value)
+        if(user_row):
+            return self.row_values(user_row)
+        return None
 
     # removes the entire row that contains the value provided
     # returns True if the operation was successful
     # returns False if there is no shuch item in the sheet
     def remove_row(self, value):
-        return remove_row(value, self.sheet)
+        row_number = self.get_row_number(value)
+        if(not row_number):
+            return False
+
+        if(row_number != self.row_count):
+            ran = str("A" + str(row_number) + ":" + "D" + str(self.row_count))
+            cell_list = self.range(ran)
+
+            for i in range(len(cell_list) - self.col_count):
+                cell_list[i].value = cell_list[i + self.col_count].value
+
+            self.update_cells(cell_list)
+
+        self.resize(self.row_count - 1, self.col_count)
+        return True
 
     # adds a row to a specified sheet given a list of values
     def add_row(self, values):
-        return add_row(values, self.sheet)
+        self.append_row(values)
+        return True
+
+
+                #### USER SHEET CLASS #####
+
 
 # Represents a user sheet, inherits everything from Sheet
 class User_Sheet(Sheet):
 
     # Initializes a new User_Sheet given the name of the sheet
     # Calls the constructor of its supertype Sheet
-    def __init__(self, string):
-        super(User_Sheet, self).__init__(string)
+    def __init__(self, string, sheetnum):
+        super(User_Sheet, self).__init__(string, sheetnum)
 
     # adds a user to an instance of User_Sheet
     def add_user(self, user):
@@ -123,7 +110,7 @@ class User_Sheet(Sheet):
     # or if the row is the very first row
     def get_user(self, userID):
         values = self.get_row(userID)
-        if(get_row_number(userID, self.sheet) == 1 or not values):
+        if(self.get_row_number(userID) == 1 or not values):
             return None
         return User.from_array(values)
 
