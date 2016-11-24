@@ -67,7 +67,7 @@ class Sheet(Worksheet):
             return False
 
         if(row_number != self.row_count):
-            ran = str("A" + str(row_number) + ":" + "D" + str(self.row_count))
+            ran = "A%d:%s"%(row_number, self.get_addr_int(self.row_count, self.col_count))
             cell_list = self.range(ran)
 
             for i in range(len(cell_list) - self.col_count):
