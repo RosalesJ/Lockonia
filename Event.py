@@ -1,19 +1,25 @@
+
 from datetime import datetime
 import User
 
+
 class Event:
+    '''
+    Object class to contain Events, which are added to the Entry Log.
+    '''
 
     def __init__(self, action, User):
-        d = datetime.today()
+        today = datetime.today()
         # Creation of date string for insertion for a cell
-        self.date = str(d.year) + '-' + str(d.month) + '-' + str(d.day)
+        self.date = str(today.year) + '-' + str(today.month) + '-' + str(today.day)
         # Creation of time string for insertion for a cell
-        self.time = str(d.hour) + ':' + str(d.minute) + ':' + str(d.second)
-        
+        self.time = str(today.hour) + ':' + str(today.minute) + ':' + str(today.second)
+
         self.action = action
         self.caseID = User.caseID
 
     def to_array(self):
+        ''' Create list representation of the Event. '''
         arr = []
 
         arr.append(self.date)
