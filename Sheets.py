@@ -4,7 +4,10 @@ These models are very row-focused, meaning the actions built off of gspread
 are focused on getting rows with certain falues, adding rows, removing rows etc.
 '''
 
+
 import gspread
+import Event
+from datetime import date
 from gspread.models import Worksheet
 from oauth2client.service_account import ServiceAccountCredentials
 from gspread.ns import _ns, ATOM_NS
@@ -13,11 +16,11 @@ from User import User
 SCOPE = ['https://spreadsheets.google.com/feeds']
 CLIENT_SECRET = "client_secret.json"
 
-#gets the credentials for google sheets
+# gets the credentials for google sheets
 def get_credentials():
     return ServiceAccountCredentials.from_json_keyfile_name(CLIENT_SECRET, SCOPE)
 
-#returns a spreadsheet given the name of the sheet
+# returns a spreadsheet given the name of the sheet
 def get_spreadsheet(sheetname):
     credentials = get_credentials()
     gc = gspread.authorize(credentials)
@@ -83,6 +86,11 @@ class Sheet(Worksheet):
         self.append_row(values)
         return True
 
+    def write_csv(self, path):
+        d = date.today()
+        self.date = str(d.year) + '-' + str(d.month) + '-' + str(d.day)
+        with open(path + '\\' +  date + ' Entry Log.csv', 'wb') as elog:
+            elog.write(self.export(format=csv))
 
                 #### USER SHEET CLASS #####
 
@@ -121,3 +129,20 @@ class User_Sheet(Sheet):
         if(self.get_user(userID)):
             return True
         return False
+
+
+# Worksheet to log activity with Lockonia
+class Entry_Sheet(Sheet):
+
+    # Initializes a new Entry_Sheet with the given name of the sheet
+    # Calls the constructor of its supertype Sheet
+    def __init__(self, string, sheetnum):
+        super(Entry_Sheet, self).__init__(string, sheetnum)
+
+    def add_event(self, Event):
+        return self.add_row(Event.to_array)
+
+    # Exports the current Entry Log as a .csv, and clears all entries
+    def download(self, path):
+        write_csv(path)
+        self.resize(1, 0)
