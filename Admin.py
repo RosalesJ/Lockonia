@@ -1,4 +1,3 @@
-
 import Event
 import User
 import Sheets
@@ -13,12 +12,9 @@ def create_new_user():
     ''' Accept multiple inputs, create a User, and add it to the User_Sheet. '''
 
     print('Creating new user.')
-    print('Enter user name')
-    name = input()
-    print('Enter case id')
-    caseID = input()
-    print('Tap card OR enter card number')
-    cardID = input()
+    name = input('Enter user name: ')
+    caseID = input('Enter case id: ')
+    cardID = input('Tap card OR enter card number: ')
     email = caseID + '@case.edu'
 
     new_user = User.User(name, caseID, cardID, email)
@@ -34,9 +30,7 @@ def remove_user():
     ''' Remove a user from the user sheet. '''
 
     print('Removing user')
-    print('Enter Case ID (without trailing whitespace) OR tap card ')
-
-    userID = input()
+    userID = input('Enter Case ID (without trailing whitespace) OR tap card: ')
 
     if users.remove_user(userID):
         print('Deletion successful')
@@ -45,6 +39,4 @@ def remove_user():
         print('Deletion failed. Please try again.')
         return False
 
-
-# Entry_Sheet Interactions 
-
+# Entry_Sheet Interactions
