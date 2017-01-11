@@ -25,7 +25,7 @@ usersLite = [users[0], users[1], users[2]]
 
 class SheetEmpty(unittest.TestCase):
 
-    sheet = Sheets.Sheet("Lockonia_user_sheet", 0)
+    sheet = Sheets.Sheet("Lockonia_User_Sheet", 0)
 
     def setUp(self):
         self.sheet.resize(1,0)
@@ -53,7 +53,7 @@ class SheetEmpty(unittest.TestCase):
         self.assertFalse(self.sheet.contains("harry"))
 
 class SheetPopulated(unittest.TestCase):
-    sheet = Sheets.Sheet("Lockonia_user_sheet", 0)
+    sheet = Sheets.Sheet("Lockonia_User_Sheet", 0)
 
     def setUp(self):
         for user in usersLite:

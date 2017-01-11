@@ -38,5 +38,3 @@ def remove_user():
     else:
         print('Deletion failed. Please try again.')
         return False
-
-# Entry_Sheet Interactions
