@@ -1,0 +1,52 @@
+#:kivy 1.0.9
+#:import Gradient Lockonia.Gradient
+
+<StartScreen>:
+    blue:0.31640625,0.7098039216,0.8549019608,1
+    white: 1, 1, 1, 1
+    grey1: 0.780, 0.780, 0.780, 1
+    grey2: 0.800, 0.800, 0.800, 1
+    grey3: 0.95, 0.95, 0.95, 1
+
+    canvas:
+        Color:
+            rgba: self.grey3
+
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            Color:
+                rgba: self.grey1
+
+        Color:
+            rgba: self.blue
+            #rgb: (81, 181, 218)
+        Rectangle:
+            pos: 0, 0
+            size: self.width/3, self.height
+        Color:
+            rgba: self.white
+
+        Rectangle:
+            pos: self.width/3 - 1, 0
+            size: 5, self.height
+            texture: Gradient.horizontal(self.grey1, self.grey3)
+
+    TextInput:
+        id: card_reader
+
+        # out of sight, out of mind
+        center_x: 10000
+        top: 10000
+
+        focus:True
+        multiline:False
+        on_text_validate: root.on_card_tap(card_reader)
+
+    Label:
+        markup: True
+        font_size: 35
+        center_x: 3*root.width / 4 - 50
+        top: root.top/2 + 60
+        text: "[font=Lao]tap card to begin[/font]"
+        color: 0.25, 0.25, 0.25, 1
