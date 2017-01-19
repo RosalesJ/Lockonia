@@ -41,9 +41,10 @@
 
         focus:True
         multiline:False
-        on_text_validate: root.on_card_tap(card_reader)
+        on_text_validate: root.on_card_tap(card_reader, label_thing)
 
     Label:
+        id: label_thing
         markup: True
         font_size: 35
         center_x: 3*root.width / 4 - 50
