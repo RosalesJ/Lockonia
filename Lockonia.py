@@ -4,6 +4,7 @@ from Sheets import Entry_Sheet
 from itertools import chain
 
 from kivy.app import App
+from kivy.lang import Builder
 from kivy.uix.widget import Widget
 from kivy.uix.textinput import TextInput
 from kivy.core.window import Window
@@ -43,6 +44,7 @@ class LockoniaApp(App):
     def build(self):
         return StartScreen()
 
+Builder.load_file("Lockonia.kv")
 
 if __name__ == '__main__':
     LockoniaApp().run()
