@@ -1,6 +1,6 @@
 import LockController
-from Sheets import User_Sheet
-from Sheets import Entry_Sheet
+from Sheets import UserSheet
+from Sheets import EntrySheet
 from itertools import chain
 import time
 

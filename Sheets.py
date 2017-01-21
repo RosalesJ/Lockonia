@@ -107,7 +107,7 @@ class Sheet(Worksheet):
 
                 #### USER SHEET CLASS #####
 
-class User_Sheet(Sheet):
+class UserSheet(Sheet):
     ''' Represents a user sheet, inherits everything from Sheet. '''
 
     def __init__(self, string, sheetnum):
@@ -151,7 +151,7 @@ class User_Sheet(Sheet):
                 #### ENTRY SHEET CLASS #####
 
 
-class Entry_Sheet(Sheet):
+class EntrySheet(Sheet):
     ''' Worksheet to log activity with Lockonia. '''
 
     def __init__(self, string, sheetnum):
