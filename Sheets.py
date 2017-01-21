@@ -107,21 +107,21 @@ class Sheet(Worksheet):
 
                 #### USER SHEET CLASS #####
 
-class User_Sheet(Sheet):
+class UserSheet(Sheet):
     ''' Represents a user sheet, inherits everything from Sheet. '''
 
     def __init__(self, string, sheetnum):
-        ''' Initialize a new User_Sheet given the name of the sheet.'''
+        ''' Initialize a new UserSheet given the name of the sheet.'''
 
         #Call the constructor of its supertype Sheet
-        super(User_Sheet, self).__init__(string, sheetnum)
+        super(UserSheet, self).__init__(string, sheetnum)
 
     def add_user(self, user):
-        ''' Add a user to an instance of User_Sheet. '''
+        ''' Add a user to an instance of UserSheet. '''
         return self.add_row(user.to_array())
 
     def remove_user(self, userID):
-        ''' Remove a user from this User_Sheet '''
+        ''' Remove a user from this UserSheet '''
         if not self.contains(userID):
             return False
         return self.remove_row(userID)
@@ -151,14 +151,14 @@ class User_Sheet(Sheet):
                 #### ENTRY SHEET CLASS #####
 
 
-class Entry_Sheet(Sheet):
+class EntrySheet(Sheet):
     ''' Worksheet to log activity with Lockonia. '''
 
     def __init__(self, string, sheetnum):
-        ''' Initialize a new Entry_Sheet with the given name of the sheet. '''
+        ''' Initialize a new EntrySheet with the given name of the sheet. '''
 
         #Call the constructor of its supertype Sheet.
-        super(Entry_Sheet, self).__init__(string, sheetnum)
+        super(EntrySheet, self).__init__(string, sheetnum)
 
     def add_event(self, Event):
         ''' Add an event to the Entry Sheet. '''
