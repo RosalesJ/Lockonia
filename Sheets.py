@@ -4,13 +4,14 @@ These models are very row-focused, meaning the actions built off of gspread
 are focused on getting rows with certain falues, adding rows, removing rows etc.
 '''
 
-from datetime import date
 import os
+from datetime import date
+from User import User
 import gspread
 from gspread.ns import _ns, ATOM_NS
 from gspread.models import Worksheet
 from oauth2client.service_account import ServiceAccountCredentials
-from User import User
+
 
 SCOPE = ['https://spreadsheets.google.com/feeds']
 CLIENT_SECRET = "client_secret.json"
@@ -111,17 +112,17 @@ class UserSheet(Sheet):
     ''' Represents a user sheet, inherits everything from Sheet. '''
 
     def __init__(self, string, sheetnum):
-        ''' Initialize a new User_Sheet given the name of the sheet.'''
+        ''' Initialize a new UserSheet given the name of the sheet.'''
 
         #Call the constructor of its supertype Sheet
-        super(User_Sheet, self).__init__(string, sheetnum)
+        super(UserSheet, self).__init__(string, sheetnum)
 
     def add_user(self, user):
-        ''' Add a user to an instance of User_Sheet. '''
+        ''' Add a user to an instance of UserSheet. '''
         return self.add_row(user.to_array())
 
     def remove_user(self, userID):
-        ''' Remove a user from this User_Sheet '''
+        ''' Remove a user from this UserSheet '''
         if not self.contains(userID):
             return False
         return self.remove_row(userID)
@@ -155,10 +156,10 @@ class EntrySheet(Sheet):
     ''' Worksheet to log activity with Lockonia. '''
 
     def __init__(self, string, sheetnum):
-        ''' Initialize a new Entry_Sheet with the given name of the sheet. '''
+        ''' Initialize a new EntrySheet with the given name of the sheet. '''
 
         #Call the constructor of its supertype Sheet.
-        super(Entry_Sheet, self).__init__(string, sheetnum)
+        super(EntrySheet, self).__init__(string, sheetnum)
 
     def add_event(self, Event):
         ''' Add an event to the Entry Sheet. '''
