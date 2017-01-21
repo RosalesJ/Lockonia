@@ -1,47 +1,42 @@
 #:kivy 1.0.9
 #:import Gradient Lockonia.Gradient
 #:import ScreenManager kivy.uix.screenmanager
-
+#:import blue __main__.blue
+#:import white __main__.white
+#:import grey1 __main__.grey1
+#:import grey2 __main__.grey2
+#:import grey3 __main__.grey3
+#:import text_color __main__.text_color
 <StartScreen>:
     name: "start"
     on_enter: self.focus_card_reader(card_reader)
-    blue:0.31640625,0.7098039216,0.8549019608,1
-    white: 1, 1, 1, 1
-    grey1: 0.780, 0.780, 0.780, 1
-    grey2: 0.800, 0.800, 0.800, 1
-    grey3: 0.95, 0.95, 0.95, 1
 
     canvas:
         Color:
-            rgba: self.grey3
-
+            rgba: grey3
         Rectangle:
             pos: self.pos
             size: self.size
-            Color:
-                rgba: self.grey1
 
         Color:
-            rgba: self.blue
-            #rgb: (81, 181, 218)
+            rgba: blue
         Rectangle:
             pos: 0, 0
             size: self.width/3, self.height
-        Color:
-            rgba: self.white
 
+        Color:
+            rgba: white
         Rectangle:
             pos: self.width/3 - 1, 0
             size: 5, self.height
-            texture: Gradient.horizontal(self.grey1, self.grey3)
+            texture: Gradient.horizontal(grey1, grey3)
 
     Label:
-        id: label_thing
         markup: True
         font_size: 35
         center_x: 2*self.width/3
         text: "[font=Lao]tap card to begin[/font]"
-        color: 0.25, 0.25, 0.25, 1
+        color: text_color
 
     CardReader:
         # out of sight, out of mind
@@ -53,14 +48,91 @@
         on_text_validate: self.on_card_tap(card_reader)
         unfocus_on_touch: False
 
-<WelcomeScreen>:
+<HomeScreen>:
     name: "welcome"
+
+    canvas:
+        Color:
+            rgba: grey3
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     Label:
         font_size: 50
         text:"Welcome"
+        color:text_color
+
+        BoxLayout:
+            pos: (root.width - self.width)/2, 0
+            size: root.width/4, root.height / 4
+
+            orientation:"vertical"
+            Button:
+                text:"Checkout"
+                on_press:root.goto_checkout()
+                background_color: blue
+            Button
+                text:"Checkin"
+                on_press:root.goto_checkin()
+                background_color: blue
 
 <InvalidUserScreen>:
     name: "invalid_user"
+
+    canvas:
+        Color:
+            rgba: grey3
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     Label:
         font_size: 30
         text:"lmao dude go gechu some admin boi"
+        color: text_color
+
+<CheckinScreen>:
+    name: "checkin"
+
+    canvas:
+        Color:
+            rgba: grey3
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label:
+        font_size: 50
+        text:"You're checking a thing in"
+        color: text_color
+
+<CheckoutScreen>:
+    name: "checkout"
+
+    canvas:
+        Color:
+            rgba: grey3
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label:
+        font_size: 50
+        text:"You're checking a thing out"
+        color: text_color
+
+<ConfirmationScreen>:
+    name: "confirmation"
+
+    canvas:
+        Color:
+            rgba: 0.95, 0.95, 0.95, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label:
+        font_size: 50
+        text:"You did a thing!"
+        color: text_color
