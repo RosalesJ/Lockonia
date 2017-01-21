@@ -1,8 +1,10 @@
 #:kivy 1.0.9
 #:import Gradient Lockonia.Gradient
+#:import ScreenManager kivy.uix.screenmanager
 
 <StartScreen>:
     name: "start"
+    on_enter: self.focus_card_reader(card_reader)
     blue:0.31640625,0.7098039216,0.8549019608,1
     white: 1, 1, 1, 1
     grey1: 0.780, 0.780, 0.780, 1
@@ -56,3 +58,9 @@
     Label:
         font_size: 50
         text:"Welcome"
+
+<InvalidUserScreen>:
+    name: "invalid_user"
+    Label:
+        font_size: 30
+        text:"lmao dude go gechu some admin boi"

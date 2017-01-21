@@ -1,6 +1,6 @@
-import LockController
-from Sheets import UserSheet
-from Sheets import EntrySheet
+#import LockController
+from Sheets import Sheet, UserSheet, EntrySheet
+from User import User
 from itertools import chain
 import time
 
@@ -14,6 +14,11 @@ from kivy.graphics.texture import Texture
 from kivy.uix.behaviors.focus import FocusBehavior
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 
+UserSheet = UserSheet("Lockonia_User_Sheet", 0)
+EntrySheet = EntrySheet("Lockonia_Log_Sheet", 0)
+CameraSheet = Sheet("Lockonia_Cameras_Sheet", 0)
+
+CurrentUser = None
 
 class Gradient(object):
     @staticmethod
@@ -34,27 +39,44 @@ class Gradient(object):
 
 class CardReader(TextInput):
     def on_card_tap(instance, value):
+        global CurrentUser
+        CurrentUser = UserSheet.get_user(value.text)
         print(value.text)
-        Clock.schedule_once(value.parent.input_detected, 0.2)
+        value.text = ''
+        if CurrentUser:
+            Clock.schedule_once(value.parent.welcome_user, 0.2)
+        else:
+            Clock.schedule_once(value.parent.invalid_user, 0.2)
 
 class StartScreen(Screen):
-    def input_detected(instance, value):
-        instance.parent.current = instance.parent.next()
+    def welcome_user(self, *args):
+        self.manager.current = "welcome"
+
+    def invalid_user(self, *args):
+        self.manager.current = "invalid_user"
+
+    def focus_card_reader(self, card_reader):
+        card_reader.focus = True
 
 class WelcomeScreen(Screen):
-    def on_touch_down(instance, value):
-        reader = instance.parent.screens[0].children[0]
-        instance.parent.current = instance.parent.next()
-        reader.focus = True
+    def on_touch_down(self, *args):
+        self.manager.current = "start"
+
+class InvalidUserScreen(Screen):
+    def on_touch_down(self, *args):
+        self.manager.current = "start"
 
 class LockoniaApp(App):
     def build(self):
         root = ScreenManager(transition=FadeTransition())
         root.add_widget(StartScreen())
         root.add_widget(WelcomeScreen())
+        root.add_widget(InvalidUserScreen())
         return root
 
 Builder.load_file("Lockonia.kv")
 
 if __name__ == '__main__':
-    LockoniaApp().run()
+    global Lockonia
+    Lockonia = LockoniaApp()
+    Lockonia.run()
