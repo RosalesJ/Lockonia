@@ -1,0 +1,66 @@
+#:kivy 1.0.9
+#:import Gradient Lockonia.Gradient
+#:import ScreenManager kivy.uix.screenmanager
+
+<StartScreen>:
+    name: "start"
+    on_enter: self.focus_card_reader(card_reader)
+    blue:0.31640625,0.7098039216,0.8549019608,1
+    white: 1, 1, 1, 1
+    grey1: 0.780, 0.780, 0.780, 1
+    grey2: 0.800, 0.800, 0.800, 1
+    grey3: 0.95, 0.95, 0.95, 1
+
+    canvas:
+        Color:
+            rgba: self.grey3
+
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            Color:
+                rgba: self.grey1
+
+        Color:
+            rgba: self.blue
+            #rgb: (81, 181, 218)
+        Rectangle:
+            pos: 0, 0
+            size: self.width/3, self.height
+        Color:
+            rgba: self.white
+
+        Rectangle:
+            pos: self.width/3 - 1, 0
+            size: 5, self.height
+            texture: Gradient.horizontal(self.grey1, self.grey3)
+
+    Label:
+        id: label_thing
+        markup: True
+        font_size: 35
+        center_x: 2*self.width/3
+        text: "[font=Lao]tap card to begin[/font]"
+        color: 0.25, 0.25, 0.25, 1
+
+    CardReader:
+        # out of sight, out of mind
+        center_x: 10000
+        top: 10000
+        id: card_reader
+        focus:True
+        multiline:False
+        on_text_validate: self.on_card_tap(card_reader)
+        unfocus_on_touch: False
+
+<WelcomeScreen>:
+    name: "welcome"
+    Label:
+        font_size: 50
+        text:"Welcome"
+
+<InvalidUserScreen>:
+    name: "invalid_user"
+    Label:
+        font_size: 30
+        text:"lmao dude go gechu some admin boi"

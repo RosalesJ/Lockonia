@@ -4,13 +4,14 @@ These models are very row-focused, meaning the actions built off of gspread
 are focused on getting rows with certain falues, adding rows, removing rows etc.
 '''
 
-from datetime import date
 import os
+from datetime import date
+from User import User
 import gspread
 from gspread.ns import _ns, ATOM_NS
 from gspread.models import Worksheet
 from oauth2client.service_account import ServiceAccountCredentials
-from User import User
+
 
 SCOPE = ['https://spreadsheets.google.com/feeds']
 CLIENT_SECRET = "client_secret.json"
