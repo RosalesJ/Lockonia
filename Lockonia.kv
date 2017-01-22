@@ -7,6 +7,28 @@
 #:import grey2 __main__.grey2
 #:import grey3 __main__.grey3
 #:import text_color __main__.text_color
+<BaseWindow>:
+    canvas:
+        Color:
+            rgba: grey3
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+        Color:
+            rgba: blue
+        Rectangle:
+            size: self.width, self.height/5
+            pos: 0, 4*self.height/5
+
+        Color:
+            rgba: white
+        Rectangle:
+            pos: 0,  4*self.height/5
+            size: self.width, 5
+            texture: Gradient.vertical(grey3, grey1)
+
+
 <StartScreen>:
     name: "start"
     on_enter: self.focus_card_reader(card_reader)
@@ -21,7 +43,6 @@
         Color:
             rgba: blue
         Rectangle:
-            pos: 0, 0
             size: self.width/3, self.height
 
         Color:
@@ -35,7 +56,7 @@
         markup: True
         font_size: 35
         center_x: 2*self.width/3
-        text: "[font=Lao]tap card to begin[/font]"
+        text: "[font=Lao]Tap card to begin[/font]"
         color: text_color
 
     CardReader:
@@ -48,91 +69,110 @@
         on_text_validate: self.on_card_tap(card_reader)
         unfocus_on_touch: False
 
+
 <HomeScreen>:
     name: "welcome"
 
-    canvas:
-        Color:
-            rgba: grey3
-        Rectangle:
-            pos: self.pos
-            size: self.size
+    BaseWindow:
+        Label:
+            font_size: 50
+            text:"Welcome"
+            color:text_color
 
-    Label:
-        font_size: 50
-        text:"Welcome"
-        color:text_color
+            BoxLayout:
+                pos: (root.width - self.width)/2, 0
+                size: root.width/2, root.height / 4
 
-        BoxLayout:
-            pos: (root.width - self.width)/2, 0
-            size: root.width/4, root.height / 4
+                orientation:"horizontal"
+                Button:
+                    text:"Checkout"
+                    on_press:root.goto_checkout()
+                    background_color: blue
+                Button
+                    text:"Checkin"
+                    on_press:root.goto_checkin()
+                    background_color: blue
 
-            orientation:"vertical"
-            Button:
-                text:"Checkout"
-                on_press:root.goto_checkout()
-                background_color: blue
-            Button
-                text:"Checkin"
-                on_press:root.goto_checkin()
-                background_color: blue
 
 <InvalidUserScreen>:
     name: "invalid_user"
 
-    canvas:
-        Color:
-            rgba: grey3
-        Rectangle:
-            pos: self.pos
-            size: self.size
+    BaseWindow:
+        Label:
+            font_size: 30
+            text:"lmao dude go gechu some admin boi"
+            color: text_color
 
-    Label:
-        font_size: 30
-        text:"lmao dude go gechu some admin boi"
-        color: text_color
 
 <CheckinScreen>:
+
     name: "checkin"
 
-    canvas:
-        Color:
-            rgba: grey3
-        Rectangle:
-            pos: self.pos
-            size: self.size
+    BaseWindow:
+        Label:
+            font_size: 50
+            text:"You're checking a thing in"
+            color: text_color
 
-    Label:
-        font_size: 50
-        text:"You're checking a thing in"
-        color: text_color
+            BoxLayout:
+                pos: 0, 0
+                size: root.width, root.height / 4
+
+                orientation:"horizontal"
+                Button:
+                    text:"Camera 1"
+                    on_press:root.checkin(1)
+                    background_color: blue
+                Button:
+                    text:"Camera 2"
+                    on_press:root.checkin(2)
+                    background_color: blue
+                Button:
+                    text:"Camera 3"
+                    on_press:root.checkin(3)
+                    background_color: blue
+                Button:
+                    text:"Camera 4"
+                    on_press:root.checkin(4)
+                    background_color: blue
+
 
 <CheckoutScreen>:
     name: "checkout"
+    BaseWindow:
+        Label:
+            font_size: 50
+            text:"You're checking a thing out"
+            color: text_color
 
-    canvas:
-        Color:
-            rgba: grey3
-        Rectangle:
-            pos: self.pos
-            size: self.size
+            BoxLayout:
+                pos: 0, 0
+                size: root.width, root.height / 4
 
-    Label:
-        font_size: 50
-        text:"You're checking a thing out"
-        color: text_color
+                orientation:"horizontal"
+                Button:
+                    text:"Camera 1"
+                    on_press:root.checkout(1)
+                    background_color: blue
+                Button:
+                    text:"Camera 2"
+                    on_press:root.checkout(2)
+                    background_color: blue
+                Button:
+                    text:"Camera 3"
+                    on_press:root.checkout(3)
+                    background_color: blue
+                Button:
+                    text:"Camera 4"
+                    on_press:root.checkout(4)
+                    background_color: blue
+
 
 <ConfirmationScreen>:
     name: "confirmation"
 
-    canvas:
-        Color:
-            rgba: 0.95, 0.95, 0.95, 1
-        Rectangle:
-            pos: self.pos
-            size: self.size
-
-    Label:
-        font_size: 50
-        text:"You did a thing!"
-        color: text_color
+    BaseWindow:
+        Label:
+            font_size: 50
+            text:"You did a thing!"
+            color: text_color

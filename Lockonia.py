@@ -5,6 +5,7 @@ from itertools import chain
 import time
 
 from kivy.clock import Clock
+from kivy.uix.label import Label
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.widget import Widget
@@ -27,6 +28,12 @@ text_color = (0.25, 0.25, 0.25, 1)
 
 
 current_user = None
+
+class BaseWindow(Screen):
+    pass
+
+class TopLabel(Label):
+    pass
 
 class Gradient(object):
     @staticmethod
@@ -65,7 +72,7 @@ class StartScreen(Screen):
     def focus_card_reader(self, card_reader):
         card_reader.focus = True
 
-class HomeScreen(Screen):
+class HomeScreen(BaseWindow):
     def goto_checkin(self):
         time.sleep(0.5)
         self.manager.current = "checkin"
@@ -79,28 +86,24 @@ class InvalidUserScreen(Screen):
         self.manager.current = "start"
 
 class CheckoutScreen(Screen):
-    def on_touch_down(self, *args):
-        Clock.schedule_once(self.done, 0.1)
-
     def done(self, *args):
         self.manager.current = "confirmation"
 
-    def checkout(self, item):
-        print("I checked out", item)
+    def checkout(self, camera):
+        print("I checked out", camera)
+        Clock.schedule_once(self.done, 0.1)
 
 class CheckinScreen(Screen):
-    def on_touch_down(self, *args):
-        Clock.schedule_once(self.done, 0.1)
-
     def done(self, *args):
         self.manager.current = "confirmation"
 
-    def checkout(self, item):
-        print("I checked in", item)
+    def checkin(self, camera):
+        print("I checked in", camera)
+        Clock.schedule_once(self.done, 0.1)
 
 class ConfirmationScreen(Screen):
      def on_touch_down(self, *args):
-         self.manager.current = "start"
+         self.manager.current = "welcome"
 
 class LockoniaApp(App):
     def build(self):
