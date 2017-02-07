@@ -1,5 +1,9 @@
 #import LockController
+<<<<<<< HEAD
 from Sheets import Sheet, UserSheet, EntrySheet, CameraSheet
+=======
+from Sheets import CameraSheet, UserSheet, LogSheet
+>>>>>>> c77e78cfd3b1cd694586a7c1c4515ae7d0c7aac6
 from User import User
 from itertools import chain
 import time
@@ -18,7 +22,11 @@ from kivy.uix.behaviors.focus import FocusBehavior
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 
 users = UserSheet("Lockonia_User_Sheet", 0)
+<<<<<<< HEAD
 log = EntrySheet("Lockonia_Log_Sheet", 0)
+=======
+log = LogSheet("Lockonia_Log_Sheet", 0)
+>>>>>>> c77e78cfd3b1cd694586a7c1c4515ae7d0c7aac6
 cameras = CameraSheet("Lockonia_Cameras_Sheet", 0)
 
 active_cameras = []
@@ -31,6 +39,24 @@ grey3 = (0.95, 0.95, 0.95, 1)
 text_color = (0.25, 0.25, 0.25, 1)
 
 current_user = None
+
+def withdraw(camera):
+    '''
+    Withdraw a camera: verify that the camera can be withdrawn by the user, log the action, and unlock
+    '''
+    if cameras.withdraw_camera(camera):
+        if users.update_cameras(current_user, camera, 'withdraw'):
+            log.create_log('withdraw', current_user, camera)
+            unlock(camera)
+
+def deposit(camera):
+    '''
+    Checkout a camera: verify that the camera can be withdrawn by the user, log the action, and unlock
+    '''
+    if cameras.deposit_camera(camera):
+        if users.update_cameras(current_user, camera, 'deposit'):
+            log.create_log('deposit', current_user, camera)
+            unlock(camera)
 
 class BaseWindow(Screen):
     pass

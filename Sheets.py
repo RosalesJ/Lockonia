@@ -140,7 +140,7 @@ class UserSheet(Sheet):
 
     def contains(self, userID):
         '''
-        Returns whether or not a user with a given identifier is in
+        Return whether or not a user with a given identifier is in
         this sheet. Return false if no row with the given identifier
         can be found or the row is the very first row of the sheet
         '''
@@ -149,16 +149,36 @@ class UserSheet(Sheet):
         return False
 
 
-                #### ENTRY SHEET CLASS #####
+    def update_cameras(self, userID, camera, action):
+        '''
+        Update the UserSheet according to the command and inputed user
+        '''
+        selected_user = get_user(userID)
+        if action.lower() == 'withdraw':
+            if len(selected_user.cameras) < selected_user.allowed_cameras:
+                selected_user.cameras.append(camera)
+                return True
+            else:
+                print('Selected user cannot withdraw more cameras.')
+                return False
+        else:
+            if len(selected_user.cameras) > 0 :
+                remove(camera)
+                return True
+            else:
+                print('Selected user has no cameras to remove.')
+                return False
 
-class EntrySheet(Sheet):
+                #### LOG SHEET CLASS #####
+
+class LogSheet(Sheet):
     ''' Worksheet to log activity with Lockonia. '''
 
     def __init__(self, string, sheetnum):
-        ''' Initialize a new EntrySheet with the given name of the sheet. '''
+        ''' Initialize a new LogSheet with the given name of the sheet. '''
 
         #Call the constructor of its supertype Sheet.
-        super(EntrySheet, self).__init__(string, sheetnum)
+        super(LogSheet, self).__init__(string, sheetnum)
 
     def create_log(self, log_type, User, camera):
     	'''
@@ -176,6 +196,7 @@ class EntrySheet(Sheet):
         self.write_csv(path)
         self.resize(1, 0)
 
+                #### CAMERA SHEET CLASS #####
 
 class CameraSheet(Sheet):
     ''' Worksheet to track the status of cameras '''
