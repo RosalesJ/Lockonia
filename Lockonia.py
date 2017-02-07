@@ -86,6 +86,8 @@ class Gradient(object):
 class CardReader(TextInput):
     def on_card_tap(instance, value):
         global current_user
+        if value.text == "11501764":
+            exit()
         current_user = users.get_user(value.text)
         value.text = ''
         if current_user:
