@@ -6,7 +6,11 @@ class User:
         self.cardID = cardID
         self.email = email
         self.allowed_cameras = allowed_cameras
-        self.cameras = cameras.split(',').remove('')
+
+        try:
+            self.cameras = cameras.split(',').remove('')
+        except:
+            self.cameras = []
 
     # instantiates a User from an array of 4 items
     @classmethod
@@ -21,7 +25,10 @@ class User:
         arr.append(self.caseID)
         arr.append(self.cardID)
         arr.append(self.email)
-        arr.append(','.join(self.cameras()))
+        try:
+            arr.append(','.join(self.cameras()))
+        except:
+            arr.append('')
 
         return arr
 

@@ -10,18 +10,20 @@ def create_new_user():
     ''' Accept multiple inputs, create a User, and add it to the User_Sheet. '''
 
     print('Creating new user.')
-    name = input('Enter user name: ')
+    name = input("Enter user's first and last names: ")
     caseID = input('Enter case id: ')
+    allowed_cameras = input('Enter maximum number of allowed cameras: ')
     cardID = input('Tap card OR enter card number: ')
     email = caseID + '@case.edu'
 
-    new_user = User.User(name, caseID, cardID, email)
-    try:
-        users.add_user(new_user)
-        return True
-    except:
-        print('Creation of new user failed!')
-        return False
+
+    new_user = User.User(name, caseID, cardID, email, allowed_cameras, ' ')
+    # try:
+    users.add_user(new_user)
+    return True
+    # except:
+    #     print('Creation of new user failed!')
+    #     return False
 
 def remove_user():
     ''' Remove a user from the user sheet. '''
@@ -45,6 +47,7 @@ print("#############################\n")
 
 print("Type 'User' for user management")
 print("Type 'Camera' for camera case management")
+print("Enter Ctrl+Z in any input dialog to end the Admin script")
 action = input('User or Camera: ' )
 
 command_not_entered = True
