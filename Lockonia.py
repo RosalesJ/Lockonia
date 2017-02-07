@@ -19,13 +19,13 @@ users = UserSheet("Lockonia_User_Sheet", 0)
 log = EntrySheet("Lockonia_Log_Sheet", 0)
 cameras = Sheet("Lockonia_Cameras_Sheet", 0)
 
+
 blue  = (0.31640625,0.7098039216,0.8549019608,1)
 white = (1, 1, 1, 1)
 grey1 = (0.780, 0.780, 0.780, 1)
 grey2 = (0.800, 0.800, 0.800, 1)
 grey3 = (0.95, 0.95, 0.95, 1)
 text_color = (0.25, 0.25, 0.25, 1)
-
 
 current_user = None
 
@@ -52,6 +52,7 @@ class Gradient(object):
         texture.blit_buffer(buf, colorfmt='rgba', bufferfmt='ubyte')
         return texture
 
+
 class CardReader(TextInput):
     def on_card_tap(instance, value):
         global current_user
@@ -72,6 +73,7 @@ class StartScreen(Screen):
     def focus_card_reader(self, card_reader):
         card_reader.focus = True
 
+
 class HomeScreen(BaseWindow):
     def goto_checkin(self):
         time.sleep(0.5)
@@ -81,9 +83,14 @@ class HomeScreen(BaseWindow):
         time.sleep(0.5)
         self.manager.current = "checkout"
 
+    def done(self):
+        self.manager.current = 'start'
+
+
 class InvalidUserScreen(Screen):
     def on_touch_down(self, *args):
         self.manager.current = "start"
+
 
 class CheckoutScreen(Screen):
     def done(self, *args):
@@ -93,6 +100,10 @@ class CheckoutScreen(Screen):
         print("I checked out", camera)
         Clock.schedule_once(self.done, 0.1)
 
+    def back(self):
+        self.manager.current = 'welcome'
+
+
 class CheckinScreen(Screen):
     def done(self, *args):
         self.manager.current = "confirmation"
@@ -101,9 +112,14 @@ class CheckinScreen(Screen):
         print("I checked in", camera)
         Clock.schedule_once(self.done, 0.1)
 
+    def back(self):
+        self.manager.current = 'welcome'
+
+
 class ConfirmationScreen(Screen):
      def on_touch_down(self, *args):
          self.manager.current = "welcome"
+
 
 class LockoniaApp(App):
     def build(self):
