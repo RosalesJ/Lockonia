@@ -6,7 +6,7 @@ class User:
         self.cardID = cardID
         self.email = email
         self.allowed_cameras = allowed_cameras
-        self.cameras = cameras.split(',').remove('')
+        self.cameras = cameras.split(',')
 
     # instantiates a User from an array of 4 items
     @classmethod

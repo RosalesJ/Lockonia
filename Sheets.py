@@ -6,6 +6,7 @@ are focused on getting rows with certain falues, adding rows, removing rows etc.
 
 import os
 import datetime
+import time
 from User import User
 import gspread
 from gspread.ns import _ns, ATOM_NS
@@ -149,25 +150,15 @@ class UserSheet(Sheet):
         return False
 
 
-    def update_cameras(self, userID, camera, action):
+    def update_cameras(self, user, camera, action):
         '''
         Update the UserSheet according to the command and inputed user
         '''
-        selected_user = get_user(userID)
         if action.lower() == 'withdraw':
-            if len(selected_user.cameras) < selected_user.allowed_cameras:
-                selected_user.cameras.append(camera)
-                return True
-            else:
-                print('Selected user cannot withdraw more cameras.')
-                return False
+            user.cameras.append(camera)
         else:
-            if len(selected_user.cameras) > 0 :
-                remove(camera)
-                return True
-            else:
-                print('Selected user has no cameras to remove.')
-                return False
+            user.cameras.remove(camera)
+        self.update_cell(self.get_row_number(user.caseID), 6, ','.join(user.cameras))
 
                 #### LOG SHEET CLASS #####
 
@@ -188,7 +179,6 @@ class LogSheet(Sheet):
     	log_row = []    # the list to store the
     	log_datetime = time.strftime('%Y-%m-%d %H:%M:%S')
     	log_row = [log_datetime, log_type, User.name, User.caseID, camera]
-
     	self.add_row(log_row)
 
     def download(self, path):
@@ -216,28 +206,15 @@ class CameraSheet(Sheet):
         for i in range(1, 5):
             if self.acell('B' + str(i)).value == 'IN':
                 available_cameras.append(self.acell('A' + str(i)).value)
-
         return available_cameras
 
     def withdraw_camera(self, camera):
         ''' Changes the status of the camera from IN to OUT'''
-        camera_num = camera[7:]
-        if self.acell(B + camera_num).value == 'IN':
-            self.update_acell('B' + camera_num, 'OUT')
-            return True
-        else:
-            print("Selected camera is disabled or checked out! Invalid operation.")
-            return False
+        self.update_cell(self.get_row_number(camera), 2, 'OUT')
 
     def deposit_camera(self, camera):
         ''' Changes the status of the camera from OUT to IN'''
-        camera_num = camera[7:]
-        if self.acell(B + camera_num).value != 'OUT':
-            self.update_acell('B' + camera_num, 'IN')
-            return True
-        else:
-            print("Selected camera is disabled or checked in! Invalid operation.")
-            return False
+        self.update_cell(self.get_row_number(camera), 2, 'IN')
 
     def disable_camera(self):
         '''

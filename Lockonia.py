@@ -1,9 +1,5 @@
-#import LockController
-<<<<<<< HEAD
-from Sheets import Sheet, UserSheet, EntrySheet, CameraSheet
-=======
+#import LockController as
 from Sheets import CameraSheet, UserSheet, LogSheet
->>>>>>> c77e78cfd3b1cd694586a7c1c4515ae7d0c7aac6
 from User import User
 from itertools import chain
 import time
@@ -13,6 +9,7 @@ from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.uix.textinput import TextInput
 from kivy.uix.boxlayout import BoxLayout
+from functools import partial
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.lang import Builder
@@ -22,11 +19,7 @@ from kivy.uix.behaviors.focus import FocusBehavior
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 
 users = UserSheet("Lockonia_User_Sheet", 0)
-<<<<<<< HEAD
-log = EntrySheet("Lockonia_Log_Sheet", 0)
-=======
 log = LogSheet("Lockonia_Log_Sheet", 0)
->>>>>>> c77e78cfd3b1cd694586a7c1c4515ae7d0c7aac6
 cameras = CameraSheet("Lockonia_Cameras_Sheet", 0)
 
 active_cameras = []
@@ -40,23 +33,31 @@ text_color = (0.25, 0.25, 0.25, 1)
 
 current_user = None
 
-def withdraw(camera):
+def withdraw(camera, *args):
     '''
     Withdraw a camera: verify that the camera can be withdrawn by the user, log the action, and unlock
     '''
-    if cameras.withdraw_camera(camera):
-        if users.update_cameras(current_user, camera, 'withdraw'):
-            log.create_log('withdraw', current_user, camera)
-            unlock(camera)
+    print("Withdrawing", camera)
+    cameras.withdraw_camera(camera)
+    print("Updating user")
+    users.update_cameras(current_user, camera, 'withdraw')
+    print("Creating Log")
+    log.create_log('withdraw', current_user, camera)
+    print("Unlocking", camera)
+    #LockController.unlock(camera)
 
-def deposit(camera):
+def deposit(camera, *args):
     '''
     Checkout a camera: verify that the camera can be withdrawn by the user, log the action, and unlock
     '''
-    if cameras.deposit_camera(camera):
-        if users.update_cameras(current_user, camera, 'deposit'):
-            log.create_log('deposit', current_user, camera)
-            unlock(camera)
+    print("Depositing", camera)
+    cameras.deposit_camera(camera)
+    print("Updating user")
+    users.update_cameras(current_user, camera, 'deposit')
+    print("Creating log")
+    log.create_log('deposit', current_user, camera)
+    print("Unlocking Controller")
+    #LockController.unlock(camera)
 
 class BaseWindow(Screen):
     pass
@@ -88,9 +89,10 @@ class CardReader(TextInput):
         current_user = users.get_user(value.text)
         value.text = ''
         if current_user:
-            Clock.schedule_once(value.parent.welcome_user, 0.2)
+            Clock.schedule_once(value.parent.welcome_user)
         else:
-            Clock.schedule_once(value.parent.invalid_user, 0.2)
+            Clock.schedule_once(value.parent.invalid_user)
+
 
 class StartScreen(Screen):
     def welcome_user(self, *args):
@@ -104,24 +106,20 @@ class StartScreen(Screen):
 
 
 class HomeScreen(BaseWindow):
-    def update_actions(self):
+    action_buttons = []
+
+    def update(self, *args):
+        Clock.unschedule(self.update_actions)
+        Clock.schedule_once(self.update_actions)
+
+    def update_actions(self, *args):
+        print("updating actions")
         actions = self.ids['action_buttons']
         actions.clear_widgets()
         if len(cameras.to_list()):
             actions.add_widget(Button(on_press=self.goto_checkout, background_color=blue, text='Checkout'))
-        if current_user.cameras:
+        if current_user.cameras != ['']:
             actions.add_widget(Button(on_press=self.goto_checkin, background_color=blue, text='Checkin'))
-
-            '''
-            Button:
-            text:"Checkout"
-            on_press:root.goto_checkout()
-            background_color: blue
-            Button
-            text:"Checkin"
-            on_press:root.goto_checkin()
-            background_color: blue
-            '''
 
     def goto_checkin(self, *args):
         time.sleep(0.5)
@@ -144,37 +142,52 @@ class CheckoutScreen(Screen):
     def done(self, *args):
         self.manager.current = "confirmation"
 
-    def checkout(self, camera):
+    def checkout(self, camera, *args):
         print("I checked out", camera)
-        Clock.schedule_once(self.done, 0.1)
+        Clock.schedule_once(partial(withdraw, camera))
+        Clock.schedule_once(self.done)
 
     def back(self):
         self.manager.current = 'welcome'
 
-    def update_displayed_cameras(self):
+    def update(self, *args):
+        Clock.unschedule(self.update_displayed_cameras)
+        Clock.schedule_once(self.update_displayed_cameras)
+
+    def update_displayed_cameras(self, *args):
+        print("updating displayed cameras")
         displayed_cameras = self.ids['displayed_cameras']
         displayed_cameras.clear_widgets()
         for camera in cameras.to_list():
-            displayed_cameras.add_widget(Button(text=camera, id=camera, background_color=blue))
+            print(camera)
+            displayed_cameras.add_widget(Button(on_press=partial(self.checkout, camera),text=camera, id=camera, background_color=blue))
 
 
 class CheckinScreen(Screen):
     def done(self, *args):
         self.manager.current = "confirmation"
 
-    def checkin(self, camera):
+    def checkin(self, camera, *largs):
         print("I checked in", camera)
-        Clock.schedule_once(self.done, 0.1)
+        Clock.schedule_once(partial(deposit, camera))
+        Clock.schedule_once(self.done)
 
     def back(self):
         self.manager.current = 'welcome'
 
-    def update_displayed_cameras(self):
+    def update(self, *args):
+        Clock.unschedule(self.update_displayed_cameras)
+        Clock.schedule_once(self.update_displayed_cameras)
+
+    def update_displayed_cameras(self, *args):
+        print("updating displayed cameras")
         displayed_cameras = self.ids['displayed_cameras']
         displayed_cameras.clear_widgets()
         user_cameras = current_user.cameras
         for camera in user_cameras:
-            displayed_cameras.add_widget(Button(text=camera, id=camera, background_color=blue))
+            if camera != '':
+                print(camera)
+                displayed_cameras.add_widget(Button(on_press=partial(self.checkin, camera),text=camera, id=camera, background_color=blue))
 
 
 
