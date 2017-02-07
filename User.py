@@ -1,10 +1,12 @@
 # Represents a user
 class User:
-    def __init__(self, name, caseID, cardID, email):
+    def __init__(self, name, caseID, cardID, email, allowed_cameras):
         self.name = name
         self.caseID = caseID
         self.cardID = cardID
         self.email = email
+        self.allowed_cameras = allowed_cameras
+        self.cameras = []
 
     # instantiates a User from an array of 4 items
     @classmethod
@@ -19,6 +21,7 @@ class User:
         arr.append(self.caseID)
         arr.append(self.cardID)
         arr.append(self.email)
+        arr.append(join(self.cameras()))
 
         return arr
 

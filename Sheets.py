@@ -5,7 +5,7 @@ are focused on getting rows with certain falues, adding rows, removing rows etc.
 '''
 
 import os
-from datetime import date
+import datetime
 from User import User
 import gspread
 from gspread.ns import _ns, ATOM_NS
@@ -151,7 +151,6 @@ class UserSheet(Sheet):
 
                 #### ENTRY SHEET CLASS #####
 
-
 class EntrySheet(Sheet):
     ''' Worksheet to log activity with Lockonia. '''
 
@@ -161,11 +160,128 @@ class EntrySheet(Sheet):
         #Call the constructor of its supertype Sheet.
         super(EntrySheet, self).__init__(string, sheetnum)
 
-    def add_event(self, Event):
-        ''' Add an event to the Entry Sheet. '''
-        return self.add_row(Event.to_array)
+    def create_log(self, log_type, User, camera):
+    	'''
+    	Create and return a log in format:
+    	DATETIME | log_type | User.name | User.caseID | camera
+    	'''
+    	log_row = []    # the list to store the
+    	log_datetime = time.strftime('%Y-%m-%d %H:%M:%S')
+    	log_row = [log_datetime, log_type, User.name, User.caseID, camera]
+
+    	self.add_row(log_row)
 
     def download(self, path):
         ''' Export the current Entry Log as a .csv, and clears all entries '''
         self.write_csv(path)
         self.resize(1, 0)
+
+
+class CameraSheet(Sheet):
+    ''' Worksheet to track the status of cameras '''
+
+    def __init__(self, string, sheetnum):
+        ''' Initializes a new CameraSheet with the given name of sheet. '''
+
+        # Call the constructor of its supertype Sheet
+        super(CameraSheet, self).__init__(string, sheetnum)
+
+    def to_list(self):
+        '''
+        Return the list of availabe cameras
+        '''
+        available_cameras = []
+
+        for i in range(1, 5):
+            if self.acell('B' + str(i)).value == 'IN':
+                available_cameras.append(self.acell('A' + str(i)).value)
+
+        return available_cameras
+
+    def withdraw_camera(self, camera):
+        ''' Changes the status of the camera from IN to OUT'''
+        camera_num = camera[7:]
+        if self.acell(B + camera_num).value == 'IN':
+            self.update_acell('B' + camera_num, 'OUT')
+            return True
+        else:
+            print("Selected camera is disabled or checked out! Invalid operation.")
+            return False
+
+    def deposit_camera(self, camera):
+        ''' Changes the status of the camera from OUT to IN'''
+        camera_num = camera[7:]
+        if self.acell(B + camera_num).value != 'OUT':
+            self.update_acell('B' + camera_num, 'IN')
+            return True
+        else:
+            print("Selected camera is disabled or checked in! Invalid operation.")
+            return False
+
+    def disable_camera(self):
+        '''
+        Disable a camera slot, so that the case cannot be withdrawn
+        '''
+        print('Disabling a camera.')
+
+        # Verifies that there are disabled cameras
+        try:
+            if int(self.acell('B5').value) > 0:
+                camera_disable = input('Select a camera. eg: 3 : ')
+            else:
+                print('No availabe cameras to disable.')
+
+        except ValueError:
+            print('Enabling failed. Invalid values. Please enter only a number. ')
+
+        except:
+            print('Unknown error. Verify that your input is only a number.')
+
+        # Validates the camera selection, ceases running with helpful error message if invalid input is entered
+        try:
+            if int(camera_disable) <= 4 and int(camera_disable) > 0: # Valid camera
+                if self.acell('B' + camera_disable).value == 'IN':
+                    self.update_acell('B' + camera_disable, 'DISABLED')
+                    self.update_acell('B5', int(self.acell('B5').value) - 1)
+                    print("Disable completed successfully. There are " + self.acell('B5').value + ' availabe cameras.\n')
+                else:
+                    print('Cannot disable that camera. It is either already disabled or currently checked out.')
+            else:
+                print('Disabling failed. Invalid values. Is your input between (inclusive) 1 and 4 ? \n')
+
+        except ValueError:
+            print('Disabling failed. Invalid values. Please enter only a number. ')
+
+        except:
+            print('Unknown error. Verify that your input is only a number.')
+
+    def enable_camera(self):
+        ''' Enables a camera slot, so that the case can be withdrawn. '''
+        print('Enabling a camera.')
+
+        # First verifies that there are disabled cameras
+        try:
+            if int(self.acell('B5').value) < 4:
+                camera_enable = input('Select a camera. eg: 3 : ')
+            else:
+                print('No disabled cameras to enable.')
+        except ValueError:
+            print('Enabling failed. Invalid values. Please enter only a number. ')
+        except:
+            print('Unknown error. Verify that your input is only a number.')
+
+        # Validates the camera selection, ceases running with helpful error message if invalid input is entered
+        try:
+            if int(camera_enable) <= 4 and int(camera_enable) > 0:   # Valid camera is selected
+                if self.acell('B' + camera_enable).value == 'DISABLED':
+                    self.update_acell('B' + camera_enable, 'IN')
+                    self.update_acell('B5', int(self.acell('B5').value) + 1)
+                    print("Enable completed successfully. There are " + self.acell('B5').value + ' availabe cameras.\n')
+                else:
+                    print('Cannot disable that camera. It is either already disabled or currently checked out.')
+            else:
+                print('Enabling failed. Invalid values. Is your input between (inclusive) 1 and 4 ? \n')
+        except ValueError:
+            print('Enabling failed. Invalid values. Please enter only a number. ')
+        except:
+            print('Unknown error. Verify that your input is only a number.')
