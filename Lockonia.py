@@ -1,5 +1,5 @@
 #import LockController
-from Sheets import Sheet, UserSheet, EntrySheet
+from Sheets import CameraSheet, UserSheet, LogSheet
 from User import User
 from itertools import chain
 import time
@@ -16,8 +16,8 @@ from kivy.uix.behaviors.focus import FocusBehavior
 from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 
 users = UserSheet("Lockonia_User_Sheet", 0)
-log = EntrySheet("Lockonia_Log_Sheet", 0)
-cameras = Sheet("Lockonia_Cameras_Sheet", 0)
+log = LogSheet("Lockonia_Log_Sheet", 0)
+cameras = CameraSheet("Lockonia_Cameras_Sheet", 0)
 
 
 blue  = (0.31640625,0.7098039216,0.8549019608,1)
@@ -28,6 +28,24 @@ grey3 = (0.95, 0.95, 0.95, 1)
 text_color = (0.25, 0.25, 0.25, 1)
 
 current_user = None
+
+def withdraw(camera):
+    '''
+    Withdraw a camera: verify that the camera can be withdrawn by the user, log the action, and unlock
+    '''
+    if cameras.withdraw_camera(camera):
+        if users.update_cameras(current_user, camera, 'withdraw'):
+            log.create_log('withdraw', current_user, camera)
+            unlock(camera)
+
+def deposit(camera):
+    '''
+    Checkout a camera: verify that the camera can be withdrawn by the user, log the action, and unlock
+    '''
+    if cameras.deposit_camera(camera):
+        if users.update_cameras(current_user, camera, 'deposit'):
+            log.create_log('deposit', current_user, camera)
+            unlock(camera)
 
 class BaseWindow(Screen):
     pass
