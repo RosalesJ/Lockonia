@@ -79,11 +79,18 @@
             text:"Welcome"
             color:text_color
 
+            Button:
+                pos:root.width - self.width + 5, root.height - self.height - 20
+                size: 100, 75
+                text:'Done'
+                on_press:root.done()
+                background_color: blue
+
             BoxLayout:
                 pos: (root.width - self.width)/2, 0
                 size: root.width/2, root.height / 4
-
                 orientation:"horizontal"
+
                 Button:
                     text:"Checkout"
                     on_press:root.goto_checkout()
@@ -100,19 +107,25 @@
     BaseWindow:
         Label:
             font_size: 30
-            text:"lmao dude go gechu some admin boi"
+            text:"Invalid ID: Please contact an Administrator"
             color: text_color
 
 
 <CheckinScreen>:
-
     name: "checkin"
 
     BaseWindow:
         Label:
-            font_size: 50
-            text:"You're checking a thing in"
+            font_size: 30
+            text:"Check in a camera"
             color: text_color
+
+            Button:
+                pos:root.width - self.width + 5, root.height - self.height - 20
+                size: 100, 75
+                text:'Back'
+                on_press:root.back()
+                background_color: blue
 
             BoxLayout:
                 pos: 0, 0
@@ -141,9 +154,16 @@
     name: "checkout"
     BaseWindow:
         Label:
-            font_size: 50
+            font_size: 30
             text:"You're checking a thing out"
             color: text_color
+
+            Button:
+                pos:root.width - self.width + 5, root.height - self.height - 20
+                size: 100, 75
+                text:'Back'
+                on_press:root.back()
+                background_color: blue
 
             BoxLayout:
                 pos: 0, 0
