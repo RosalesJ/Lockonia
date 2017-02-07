@@ -1,15 +1,17 @@
 #import LockController
-from Sheets import Sheet, UserSheet, EntrySheet
+from Sheets import Sheet, UserSheet, EntrySheet, CameraSheet
 from User import User
 from itertools import chain
 import time
 
-from kivy.clock import Clock
 from kivy.uix.label import Label
-from kivy.app import App
-from kivy.lang import Builder
+from kivy.uix.button import Button
 from kivy.uix.widget import Widget
 from kivy.uix.textinput import TextInput
+from kivy.uix.boxlayout import BoxLayout
+from kivy.app import App
+from kivy.clock import Clock
+from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.graphics.texture import Texture
 from kivy.uix.behaviors.focus import FocusBehavior
@@ -17,8 +19,9 @@ from kivy.uix.screenmanager import ScreenManager, Screen, FadeTransition
 
 users = UserSheet("Lockonia_User_Sheet", 0)
 log = EntrySheet("Lockonia_Log_Sheet", 0)
-cameras = Sheet("Lockonia_Cameras_Sheet", 0)
+cameras = CameraSheet("Lockonia_Cameras_Sheet", 0)
 
+active_cameras = []
 
 blue  = (0.31640625,0.7098039216,0.8549019608,1)
 white = (1, 1, 1, 1)
@@ -75,11 +78,30 @@ class StartScreen(Screen):
 
 
 class HomeScreen(BaseWindow):
-    def goto_checkin(self):
+    def update_actions(self):
+        actions = self.ids['action_buttons']
+        actions.clear_widgets()
+        if len(cameras.to_list()):
+            actions.add_widget(Button(on_press=self.goto_checkout, background_color=blue, text='Checkout'))
+        if current_user.cameras:
+            actions.add_widget(Button(on_press=self.goto_checkin, background_color=blue, text='Checkin'))
+
+            '''
+            Button:
+            text:"Checkout"
+            on_press:root.goto_checkout()
+            background_color: blue
+            Button
+            text:"Checkin"
+            on_press:root.goto_checkin()
+            background_color: blue
+            '''
+
+    def goto_checkin(self, *args):
         time.sleep(0.5)
         self.manager.current = "checkin"
 
-    def goto_checkout(self):
+    def goto_checkout(self, *args):
         time.sleep(0.5)
         self.manager.current = "checkout"
 
@@ -103,6 +125,12 @@ class CheckoutScreen(Screen):
     def back(self):
         self.manager.current = 'welcome'
 
+    def update_displayed_cameras(self):
+        displayed_cameras = self.ids['displayed_cameras']
+        displayed_cameras.clear_widgets()
+        for camera in cameras.to_list():
+            displayed_cameras.add_widget(Button(text=camera, id=camera, background_color=blue))
+
 
 class CheckinScreen(Screen):
     def done(self, *args):
@@ -114,6 +142,14 @@ class CheckinScreen(Screen):
 
     def back(self):
         self.manager.current = 'welcome'
+
+    def update_displayed_cameras(self):
+        displayed_cameras = self.ids['displayed_cameras']
+        displayed_cameras.clear_widgets()
+        user_cameras = current_user.cameras
+        for camera in user_cameras:
+            displayed_cameras.add_widget(Button(text=camera, id=camera, background_color=blue))
+
 
 
 class ConfirmationScreen(Screen):
@@ -131,6 +167,8 @@ class LockoniaApp(App):
         root.add_widget(CheckinScreen())
         root.add_widget(ConfirmationScreen())
         return root
+
+
 
 Builder.load_file("Lockonia.kv")
 

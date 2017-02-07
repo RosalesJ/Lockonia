@@ -72,8 +72,9 @@
 
 <HomeScreen>:
     name: "welcome"
-
+    on_enter: self.update_actions()
     BaseWindow:
+
         Label:
             font_size: 50
             text:"Welcome"
@@ -87,18 +88,11 @@
                 background_color: blue
 
             BoxLayout:
+                id: action_buttons
                 pos: (root.width - self.width)/2, 0
                 size: root.width/2, root.height / 4
                 orientation:"horizontal"
 
-                Button:
-                    text:"Checkout"
-                    on_press:root.goto_checkout()
-                    background_color: blue
-                Button
-                    text:"Checkin"
-                    on_press:root.goto_checkin()
-                    background_color: blue
 
 
 <InvalidUserScreen>:
@@ -110,12 +104,13 @@
             text:"Invalid ID: Please contact an Administrator"
             color: text_color
 
-
 <CheckinScreen>:
     name: "checkin"
 
     BaseWindow:
+        id: base
         Label:
+            id:root_label
             font_size: 30
             text:"Check in a camera"
             color: text_color
@@ -128,32 +123,19 @@
                 background_color: blue
 
             BoxLayout:
+                id: displayed_cameras
+                orientation:'horizontal'
                 pos: 0, 0
-                size: root.width, root.height / 4
-
-                orientation:"horizontal"
-                Button:
-                    text:"Camera 1"
-                    on_press:root.checkin(1)
-                    background_color: blue
-                Button:
-                    text:"Camera 2"
-                    on_press:root.checkin(2)
-                    background_color: blue
-                Button:
-                    text:"Camera 3"
-                    on_press:root.checkin(3)
-                    background_color: blue
-                Button:
-                    text:"Camera 4"
-                    on_press:root.checkin(4)
-                    background_color: blue
+                size: root.width, root.height/4
 
 
 <CheckoutScreen>:
     name: "checkout"
+    on_enter: self.update_displayed_cameras()
     BaseWindow:
+        id: base
         Label:
+            id: root_label
             font_size: 30
             text:"You're checking a thing out"
             color: text_color
@@ -166,26 +148,10 @@
                 background_color: blue
 
             BoxLayout:
+                id: displayed_cameras
+                orientation:'horizontal'
                 pos: 0, 0
-                size: root.width, root.height / 4
-
-                orientation:"horizontal"
-                Button:
-                    text:"Camera 1"
-                    on_press:root.checkout(1)
-                    background_color: blue
-                Button:
-                    text:"Camera 2"
-                    on_press:root.checkout(2)
-                    background_color: blue
-                Button:
-                    text:"Camera 3"
-                    on_press:root.checkout(3)
-                    background_color: blue
-                Button:
-                    text:"Camera 4"
-                    on_press:root.checkout(4)
-                    background_color: blue
+                size: root.width, root.height/4
 
 
 <ConfirmationScreen>:
