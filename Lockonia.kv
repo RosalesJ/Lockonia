@@ -31,7 +31,7 @@
 
 <StartScreen>:
     name: "start"
-    on_enter: self.focus_card_reader(card_reader)
+    on_pre_enter: self.focus_card_reader(card_reader)
 
     canvas:
         Color:
@@ -72,7 +72,7 @@
 
 <HomeScreen>:
     name: "welcome"
-    on_enter: self.update_actions()
+    on_pre_enter: self.update()
     BaseWindow:
 
         Label:
@@ -106,7 +106,7 @@
 
 <CheckinScreen>:
     name: "checkin"
-
+    on_pre_enter: self.update()
     BaseWindow:
         id: base
         Label:
@@ -131,13 +131,13 @@
 
 <CheckoutScreen>:
     name: "checkout"
-    on_enter: self.update_displayed_cameras()
+    on_pre_enter: self.update()
     BaseWindow:
         id: base
         Label:
             id: root_label
             font_size: 30
-            text:"You're checking a thing out"
+            text:"Check out a camera"
             color: text_color
 
             Button:
@@ -159,6 +159,6 @@
 
     BaseWindow:
         Label:
-            font_size: 50
-            text:"You did a thing!"
+            font_size: 30
+            text:"Success!"
             color: text_color

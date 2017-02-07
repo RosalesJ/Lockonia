@@ -8,7 +8,7 @@ class User:
         self.allowed_cameras = allowed_cameras
 
         try:
-            self.cameras = cameras.split(',').remove('')
+            self.cameras = cameras.split(',')
         except:
             self.cameras = []
 
