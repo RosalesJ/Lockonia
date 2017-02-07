@@ -6,12 +6,12 @@ class User:
         self.cardID = cardID
         self.email = email
         self.allowed_cameras = allowed_cameras
-        self.cameras = cameras.split(',')
+        self.cameras = cameras.split(',').remove('')
 
     # instantiates a User from an array of 4 items
     @classmethod
     def from_array(cls, arr):
-        return cls(arr[0], arr[1], arr[2], arr[3], arr[4])
+        return cls(arr[0], arr[1], arr[2], arr[3], arr[4], arr[5])
 
 
     def to_array(self):
